@@ -1,0 +1,16 @@
+A command line tool that displays a slideshow given input to images.
+
+It will take many arguments:
+- A directory of images
+- A scale type
+- A transition type
+- A duration type
+- Ping Pong, Repeat, etc
+
+Start simple
+
+Input a directory and time each image is shown. Only support pngs for now
+and image scales to a static screen size.
+
+How should the images be loaded in?
+A fixed sized image buffer that can load N images at a time.
