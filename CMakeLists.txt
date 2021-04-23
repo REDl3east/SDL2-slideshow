@@ -1,6 +1,6 @@
 # https://github.com/aminosbh/sdl2-cmake-modules
 
-project(sdl2-template)
+project(sdl2-slideshow)
 cmake_minimum_required(VERSION 3.5.1)
 
 # Add SDL2 CMake modules
@@ -13,7 +13,7 @@ set(SOURCES
     src/main.cpp
 )
 add_executable(${PROJECT_NAME} ${SOURCES})
-
+target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
 
 # Add SDL2 library
 find_package(SDL2 REQUIRED)
