@@ -14,3 +14,4 @@ and image scales to a static screen size.
 
 How should the images be loaded in?
 A fixed sized image buffer that can load N images at a time.
+Right now just load one at a time.
