@@ -52,8 +52,9 @@ void fit_image(SDL_Window *window, SDL_Surface *surface, SDL_Rect& rect_out) {
   SDL_GetWindowSize(window, &window_w, &window_h);
 
   SDL_Rect window_rect = {0, 0, window_w, window_h};
+  SDL_Rect surface_rect = surface->clip_rect;
 
-  fit_image(window_rect, surface->clip_rect, rect_out);
+  fit_image(window_rect, surface_rect, rect_out);
 }
 
 
