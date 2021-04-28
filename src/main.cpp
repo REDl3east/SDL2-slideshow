@@ -31,16 +31,26 @@ SDL_Rect fit_image(SDL_Window *window, SDL_Surface *surface) {
   out.w = surface->w;
   out.h = surface->h;
 
-  if(window_h > surface->h){
-    
-  }else{
-
-  }
-
-  if(window_w > surface->w){
-
-  }else{
-
+  if (window_h > surface->h && window_w > surface->w) {
+    out.w = surface->w;
+    out.h = surface->h;
+    out.x = (window_w - surface->w) / 2;
+    out.y = (window_h - out.h) / 2;
+  } else if (window_h > surface->h && window_w < surface->w) {
+    out.w = window_w;
+    out.h = ((double)window_w / (double)surface->w) * surface->h;
+    out.x = 0;
+    out.y = (window_h - out.h) / 2;
+  } else if (window_h < surface->h && window_w > surface->w) {
+    out.w = ((double)window_h / (double)surface->h) * surface->w;
+    out.h = window_h;
+    out.x = (window_w - out.w) / 2;
+    out.y = 0;
+  }else if (window_h < surface->h && window_w > surface->w) {
+    out.w = ((double)window_h / (double)surface->h) * surface->w;
+    out.h = window_h;
+    out.x = (window_w - out.w) / 2;
+    out.y = 0;
   }
 
   return out;
@@ -58,12 +68,14 @@ int main(int argc, char **argv) {
   IMG_Init(IMG_INIT_PNG);
 
   SDL_Window *window = SDL_CreateWindow(APP_NAME, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_RESIZABLE);
-  SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC);
+  SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, 0);
 
   SDL_Surface *current_image = IMG_Load(filenames[7].c_str());
   SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, current_image);
 
   int duration = 5000;
+
+  int i = 0;
 
   SDL_Event event;
   bool quit = false;
@@ -80,11 +92,12 @@ int main(int argc, char **argv) {
 
     int window_w, window_h;
     SDL_GetWindowSize(window, &window_w, &window_h);
-    // std::cout << "W: " << window_w << "H: " << window_h << '\n';
 
-    // SDL_Rect r = fit_image(window, current_image);
-    SDL_Rect r = {0, 0, 480, 360};
+    SDL_Rect r = fit_image(window, current_image);
+    // SDL_Rect r = {0, 0, 720, 360};
 
+    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+    SDL_RenderClear(renderer);
     SDL_RenderCopy(renderer, texture, NULL, &r);
     SDL_RenderPresent(renderer);
   }
