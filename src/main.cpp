@@ -21,40 +21,42 @@ std::vector<std::string> get_filenames_from_path(const std::string &path) {
   return out;
 }
 
-SDL_Rect fit_image(SDL_Window *window, SDL_Surface *surface) {
-  SDL_Rect out;
+void fit_image(SDL_Rect& window_rect, SDL_Rect& surface_rect, SDL_Rect& out_rect) {
+  out_rect.x = 0;
+  out_rect.y = 0;
+  out_rect.w = surface_rect.w;
+  out_rect.h = surface_rect.h;
+
+  if (window_rect.h > surface_rect.h && window_rect.w > surface_rect.w) {
+    out_rect.w = surface_rect.w;
+    out_rect.h = surface_rect.h;
+    out_rect.x = (window_rect.w - surface_rect.w) / 2;
+    out_rect.y = (window_rect.h - out_rect.h) / 2;
+  } else if (window_rect.h > surface_rect.h && window_rect.w < surface_rect.w) {
+    out_rect.w = window_rect.w;
+    out_rect.h = ((double)window_rect.w / (double)surface_rect.w) * surface_rect.h;
+    out_rect.x = 0;
+    out_rect.y = (window_rect.h - out_rect.h) / 2;
+  } else if (window_rect.h < surface_rect.h && window_rect.w > surface_rect.w) {
+    out_rect.w = ((double)window_rect.h / (double)surface_rect.h) * surface_rect.w;
+    out_rect.h = window_rect.h;
+    out_rect.x = (window_rect.w - out_rect.w) / 2;
+    out_rect.y = 0;
+  } else if (window_rect.h < surface_rect.h && window_rect.w < surface_rect.w) {
+    //calculate the new surface
+  }
+}
+
+void fit_image(SDL_Window *window, SDL_Surface *surface, SDL_Rect& rect_out) {
   int window_w, window_h;
   SDL_GetWindowSize(window, &window_w, &window_h);
 
-  out.x = 0;
-  out.y = 0;
-  out.w = surface->w;
-  out.h = surface->h;
+  SDL_Rect window_rect = {0, 0, window_w, window_h};
 
-  if (window_h > surface->h && window_w > surface->w) {
-    out.w = surface->w;
-    out.h = surface->h;
-    out.x = (window_w - surface->w) / 2;
-    out.y = (window_h - out.h) / 2;
-  } else if (window_h > surface->h && window_w < surface->w) {
-    out.w = window_w;
-    out.h = ((double)window_w / (double)surface->w) * surface->h;
-    out.x = 0;
-    out.y = (window_h - out.h) / 2;
-  } else if (window_h < surface->h && window_w > surface->w) {
-    out.w = ((double)window_h / (double)surface->h) * surface->w;
-    out.h = window_h;
-    out.x = (window_w - out.w) / 2;
-    out.y = 0;
-  }else if (window_h < surface->h && window_w > surface->w) {
-    out.w = ((double)window_h / (double)surface->h) * surface->w;
-    out.h = window_h;
-    out.x = (window_w - out.w) / 2;
-    out.y = 0;
-  }
-
-  return out;
+  fit_image(window_rect, surface->clip_rect, rect_out);
 }
+
+
 
 int main(int argc, char **argv) {
   //obtain file names from assets
@@ -93,7 +95,8 @@ int main(int argc, char **argv) {
     int window_w, window_h;
     SDL_GetWindowSize(window, &window_w, &window_h);
 
-    SDL_Rect r = fit_image(window, current_image);
+    SDL_Rect r;
+    fit_image(window, current_image, r);
     // SDL_Rect r = {0, 0, 720, 360};
 
     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
