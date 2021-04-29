@@ -31,6 +31,7 @@ int main(int argc, char **argv) {
   SDL_Surface *current_image = IMG_Load(filenames[0].c_str());
   SDL_Texture *current_texture = SDL_CreateTextureFromSurface(renderer, current_image);
 
+SDL_SetWindowTitle(window, filenames[0].c_str());
   SDL_SetWindowMinimumSize(window, 250, 250);
 
   int index = 0;
@@ -45,6 +46,7 @@ int main(int argc, char **argv) {
     SDL_FreeSurface(current_image);
     current_image = IMG_Load(filenames[index].c_str());
     current_texture = SDL_CreateTextureFromSurface(renderer, current_image);
+    SDL_SetWindowTitle(window, filenames[index].c_str());
   };
 
   SDL_Event event;
