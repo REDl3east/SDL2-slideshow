@@ -7,11 +7,21 @@ It will take many arguments:
 - A duration type
 - Ping Pong, Repeat, etc
 
+Navigation:
+arrow keys
+buttons that appear when mouse moves
+
 Start simple
 
 Input a directory and time each image is shown. Only support pngs for now
 and image scales to a static screen size.
 
 How should the images be loaded in?
-A fixed sized image buffer that can load N images at a time.
+A fixed sized image buffer that can load N images at a time. Another thread
+handles the loading of images, maybe.
 Right now just load one at a time.
+
+features implemented:
+
+dynamic image scaling
+image navigation with right/left keys
