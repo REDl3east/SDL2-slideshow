@@ -14,7 +14,6 @@ std::vector<std::string> get_filenames_from_path(const std::string &path);
 void fit_image(SDL_Window *window, SDL_Surface *surface, SDL_Rect &rect_out);
 void fit_image(SDL_Rect &window_rect, SDL_Rect &surface_rect, SDL_Rect &out_rect);
 
-
 int main(int argc, char **argv) {
   //obtain file names from assets
   auto filenames = get_filenames_from_path("assets");
@@ -24,14 +23,14 @@ int main(int argc, char **argv) {
   }
 
   SDL_Init(SDL_INIT_EVERYTHING);
-  IMG_Init(IMG_INIT_PNG);
+  IMG_Init(IMG_INIT_PNG | IMG_INIT_JPG);
 
   SDL_Window *window = SDL_CreateWindow(APP_NAME, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_RESIZABLE);
   SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, 0);
   SDL_Surface *current_image = IMG_Load(filenames[0].c_str());
   SDL_Texture *current_texture = SDL_CreateTextureFromSurface(renderer, current_image);
 
-SDL_SetWindowTitle(window, filenames[0].c_str());
+  SDL_SetWindowTitle(window, filenames[0].c_str());
   SDL_SetWindowMinimumSize(window, 250, 250);
 
   int index = 0;
@@ -93,7 +92,6 @@ SDL_SetWindowTitle(window, filenames[0].c_str());
 
   return 0;
 }
-
 
 std::vector<std::string> get_filenames_from_path(const std::string &path) {
   std::vector<std::string> out;
