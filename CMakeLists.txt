@@ -14,6 +14,8 @@ set(SOURCES
 )
 add_executable(${PROJECT_NAME} ${SOURCES})
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
+set_target_properties( ${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+
 
 # Add SDL2 library
 find_package(SDL2 REQUIRED)
