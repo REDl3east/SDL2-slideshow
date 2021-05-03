@@ -1,14 +1,10 @@
 #include "main.h"
 
-#include <filesystem>
-#include <iostream>
-#include <optional>
-#include <string>
-#include <vector>
-
 #define SCREEN_WIDTH 1280
 #define SCREEN_HEIGHT 720
 #define APP_NAME "Slideshow App"
+
+#define BUTTON_SIZE 50
 
 std::vector<std::string> get_filenames_from_path(const std::string &path);
 void fit_image(SDL_Window *window, SDL_Surface *surface, SDL_Rect &rect_out);
@@ -32,6 +28,9 @@ int main(int argc, char **argv) {
 
   SDL_SetWindowTitle(window, filenames[0].c_str());
   SDL_SetWindowMinimumSize(window, 250, 250);
+
+  Button left_btn(renderer, "assets/button/next-btn.png", 500, 500, 0.5);
+  Button right_btn(renderer, "assets/button/next-btn.png", 0, 0, 0.5);
 
   int index = 0;
   auto increment_index = [&index, &filenames]() {
@@ -60,8 +59,7 @@ int main(int argc, char **argv) {
           if (event.key.keysym.sym == SDLK_LEFT) {
             decrement_index();
             update_texture();
-          }
-          if (event.key.keysym.sym == SDLK_RIGHT) {
+          } else if (event.key.keysym.sym == SDLK_RIGHT) {
             increment_index();
             update_texture();
           }
@@ -74,12 +72,20 @@ int main(int argc, char **argv) {
     int window_w, window_h;
     SDL_GetWindowSize(window, &window_w, &window_h);
 
+    left_btn.update_pos((left_btn.width() / 2) + 10, window_h / 2);
+    right_btn.update_pos(window_w - (right_btn.width() / 2) - 10, window_h / 2);
+
     SDL_Rect r;
     fit_image(window, current_image, r);
 
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
+
     SDL_RenderCopy(renderer, current_texture, NULL, &r);
+
+    left_btn.render();
+    right_btn.render();
+
     SDL_RenderPresent(renderer);
   }
 
@@ -98,8 +104,11 @@ std::vector<std::string> get_filenames_from_path(const std::string &path) {
 
   if (!std::filesystem::is_directory(path)) return out;
 
-  for (const auto &entry : std::filesystem::directory_iterator(path))
-    out.emplace_back(entry.path());
+  for (const auto &entry : std::filesystem::directory_iterator(path)) {
+    if (!entry.is_directory()) {
+      out.emplace_back(entry.path());
+    }
+  }
 
   return out;
 }
