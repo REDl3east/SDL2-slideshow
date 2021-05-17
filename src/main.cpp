@@ -29,8 +29,8 @@ int main(int argc, char **argv) {
   SDL_SetWindowTitle(window, filenames[0].c_str());
   SDL_SetWindowMinimumSize(window, 250, 250);
 
-  Button left_btn(renderer, "assets/button/next-btn.png", 500, 500, 0.5);
-  Button right_btn(renderer, "assets/button/next-btn.png", 0, 0, 0.5);
+  // Button left_btn(renderer, "assets/button/next-btn.png", "assets/button/next-btn-down.png", 500, 500, 0.5);
+  // Button right_btn(renderer, "assets/button/next-btn.png", "assets/button/next-btn-down.png", 0, 0, 0.5);
 
   int index = 0;
   auto increment_index = [&index, &filenames]() {
@@ -46,6 +46,14 @@ int main(int argc, char **argv) {
     current_texture = SDL_CreateTextureFromSurface(renderer, current_image);
     SDL_SetWindowTitle(window, filenames[index].c_str());
   };
+
+  auto btn_surface = IMG_Load("assets/button/btn.png");
+  auto btn_texture = SDL_CreateTextureFromSurface(renderer, btn_surface);
+  TwoDirectionalButton right_btn(renderer, btn_texture, 0, 0, 100, 100, 0.5);
+  TwoDirectionalButton left_btn(renderer, btn_texture, 0, 0, 100, 100, 0.5, Direction::Flipped);
+
+  // SDL_Cursor * cursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_NO); 
+  // SDL_SetCursor(cursor); 
 
   SDL_Event event;
   bool quit = false;
@@ -83,11 +91,16 @@ int main(int argc, char **argv) {
 
     SDL_RenderCopy(renderer, current_texture, NULL, &r);
 
+    // x, y, w, h, image, scale, initial direction (LEFT or RIGHT), initial state (IDLE or HOVERED)
+
     left_btn.render();
     right_btn.render();
 
     SDL_RenderPresent(renderer);
   }
+
+  SDL_FreeSurface(btn_surface);
+  SDL_DestroyTexture(btn_texture);
 
   SDL_DestroyTexture(current_texture);
   SDL_FreeSurface(current_image);
