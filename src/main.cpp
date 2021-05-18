@@ -7,6 +7,9 @@
 #define BTN_TIMER 1000
 #define BTN_TIMERCODE 0
 
+#define SLIDESHOW_TIMER 1000
+#define SLIDESHOW_TIMERCODE 1
+
 std::vector<std::string> get_filenames_from_path(const std::string &path);
 void fit_image(SDL_Window *window, SDL_Surface *surface, SDL_Rect &rect_out);
 void fit_image(SDL_Rect &window_rect, SDL_Rect &surface_rect, SDL_Rect &out_rect);
@@ -53,6 +56,8 @@ int main(int argc, char **argv) {
 
   SDL_TimerID btn_timer_id;
 
+  bool is_fullscreen = false;
+
   SDL_Event event;
   bool quit = false;
   while (!quit) {
@@ -68,6 +73,15 @@ int main(int argc, char **argv) {
           } else if (event.key.keysym.sym == SDLK_RIGHT) {
             increment_index();
             update_texture();
+          } else if (event.key.keysym.sym == SDLK_f) {
+            if (is_fullscreen) {
+              SDL_SetWindowFullscreen(window, 0);
+            } else {
+              SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+              //setup timer for slideshow
+              
+            }
+            is_fullscreen = !is_fullscreen;
           }
           break;
         case SDL_MOUSEMOTION: {
