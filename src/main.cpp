@@ -29,9 +29,6 @@ int main(int argc, char **argv) {
   SDL_SetWindowTitle(window, filenames[0].c_str());
   SDL_SetWindowMinimumSize(window, 250, 250);
 
-  // Button left_btn(renderer, "assets/button/next-btn.png", "assets/button/next-btn-down.png", 500, 500, 0.5);
-  // Button right_btn(renderer, "assets/button/next-btn.png", "assets/button/next-btn-down.png", 0, 0, 0.5);
-
   int index = 0;
   auto increment_index = [&index, &filenames]() {
     index = (index + 1) % filenames.size();
@@ -52,8 +49,8 @@ int main(int argc, char **argv) {
   TwoDirectionalButton right_btn(renderer, btn_texture, 0, 0, 100, 100, 0.5);
   TwoDirectionalButton left_btn(renderer, btn_texture, 0, 0, 100, 100, 0.5, Direction::Flipped);
 
-  // SDL_Cursor * cursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_NO); 
-  // SDL_SetCursor(cursor); 
+  // SDL_Cursor * cursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_NO);
+  // SDL_SetCursor(cursor);
 
   SDL_Event event;
   bool quit = false;
@@ -72,6 +69,31 @@ int main(int argc, char **argv) {
             update_texture();
           }
           break;
+        case SDL_MOUSEMOTION: {
+          SDL_Point p = {event.motion.x, event.motion.y};
+          if (SDL_PointInRect(&p, &left_btn.get_rect()) == SDL_TRUE) {
+            left_btn.update_state(State::Hovered);
+          } else {
+            left_btn.update_state(State::Default);
+          }
+          if (SDL_PointInRect(&p, &right_btn.get_rect()) == SDL_TRUE) {
+            right_btn.update_state(State::Hovered);
+          } else {
+            right_btn.update_state(State::Default);
+          }
+          break;
+        }
+        case SDL_MOUSEBUTTONUP: {
+          SDL_Point p = {event.button.x, event.button.y};
+          if (SDL_PointInRect(&p, &left_btn.get_rect()) == SDL_TRUE) {
+            decrement_index();
+            update_texture();
+          } else if (SDL_PointInRect(&p, &right_btn.get_rect()) == SDL_TRUE) {
+            increment_index();
+            update_texture();
+          }
+          break;
+        }
       }
     }
 
@@ -90,8 +112,6 @@ int main(int argc, char **argv) {
     SDL_RenderClear(renderer);
 
     SDL_RenderCopy(renderer, current_texture, NULL, &r);
-
-    // x, y, w, h, image, scale, initial direction (LEFT or RIGHT), initial state (IDLE or HOVERED)
 
     left_btn.render();
     right_btn.render();
