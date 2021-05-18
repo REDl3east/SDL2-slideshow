@@ -31,7 +31,8 @@ class TwoDirectionalButton {
   ~TwoDirectionalButton() {
   }
   void render() {
-    SDL_RenderCopy(renderer, texture, &button_rect, &window_rect);
+    if(visible)
+      SDL_RenderCopy(renderer, texture, &button_rect, &window_rect);
   }
   void update_pos(int x, int y) {
     this->x = x;
@@ -53,8 +54,11 @@ class TwoDirectionalButton {
     return h * scale;
   }
 
-  SDL_Rect& get_rect(){
+  SDL_Rect &get_rect() {
     return window_rect;
+  }
+  void set_visible(bool value) {
+    visible = value;
   }
 
  private:
@@ -67,6 +71,7 @@ class TwoDirectionalButton {
   State state;
   SDL_Rect button_rect;
   SDL_Rect window_rect;
+  bool visible = true;
 };
 
 // enum class State {
