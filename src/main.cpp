@@ -10,20 +10,7 @@
 std::vector<std::string> get_filenames_from_path(const std::string &path);
 void fit_image(SDL_Window *window, SDL_Surface *surface, SDL_Rect &rect_out);
 void fit_image(SDL_Rect &window_rect, SDL_Rect &surface_rect, SDL_Rect &out_rect);
-
-Uint32 btn_timer_callback(Uint32 interval, void *param) {
-  SDL_Event event;
-  SDL_UserEvent userevent;
-
-  userevent.type = SDL_USEREVENT;
-  userevent.code = BTN_TIMERCODE;
-
-  event.type = SDL_USEREVENT;
-  event.user = userevent;
-
-  SDL_PushEvent(&event);
-  return 0;
-}
+Uint32 btn_timer_callback(Uint32 interval, void *param);
 
 int main(int argc, char **argv) {
   //obtain file names from assets
@@ -163,6 +150,20 @@ int main(int argc, char **argv) {
   IMG_Quit();
   SDL_Quit();
 
+  return 0;
+}
+
+Uint32 btn_timer_callback(Uint32 interval, void *param) {
+  SDL_Event event;
+  SDL_UserEvent userevent;
+
+  userevent.type = SDL_USEREVENT;
+  userevent.code = BTN_TIMERCODE;
+
+  event.type = SDL_USEREVENT;
+  event.user = userevent;
+
+  SDL_PushEvent(&event);
   return 0;
 }
 
