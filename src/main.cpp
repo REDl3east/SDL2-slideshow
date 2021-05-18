@@ -4,11 +4,26 @@
 #define SCREEN_HEIGHT 720
 #define APP_NAME "Slideshow App"
 
-#define BUTTON_SIZE 50
+#define BTN_TIMER 1000
+#define BTN_TIMERCODE 0
 
 std::vector<std::string> get_filenames_from_path(const std::string &path);
 void fit_image(SDL_Window *window, SDL_Surface *surface, SDL_Rect &rect_out);
 void fit_image(SDL_Rect &window_rect, SDL_Rect &surface_rect, SDL_Rect &out_rect);
+
+Uint32 btn_timer_callback(Uint32 interval, void *param) {
+  SDL_Event event;
+  SDL_UserEvent userevent;
+
+  userevent.type = SDL_USEREVENT;
+  userevent.code = BTN_TIMERCODE;
+
+  event.type = SDL_USEREVENT;
+  event.user = userevent;
+
+  SDL_PushEvent(&event);
+  return 0;
+}
 
 int main(int argc, char **argv) {
   //obtain file names from assets
@@ -49,8 +64,7 @@ int main(int argc, char **argv) {
   TwoDirectionalButton right_btn(renderer, btn_texture, 0, 0, 100, 100, 0.5);
   TwoDirectionalButton left_btn(renderer, btn_texture, 0, 0, 100, 100, 0.5, Direction::Flipped);
 
-  // SDL_Cursor * cursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_NO);
-  // SDL_SetCursor(cursor);
+  SDL_TimerID btn_timer_id;
 
   SDL_Event event;
   bool quit = false;
@@ -70,17 +84,30 @@ int main(int argc, char **argv) {
           }
           break;
         case SDL_MOUSEMOTION: {
+          left_btn.set_visible(true);
+          right_btn.set_visible(true);
+          bool off_btn = true;
           SDL_Point p = {event.motion.x, event.motion.y};
           if (SDL_PointInRect(&p, &left_btn.get_rect()) == SDL_TRUE) {
+            SDL_RemoveTimer(btn_timer_id);
             left_btn.update_state(State::Hovered);
+            off_btn = false;
           } else {
             left_btn.update_state(State::Default);
           }
           if (SDL_PointInRect(&p, &right_btn.get_rect()) == SDL_TRUE) {
+            SDL_RemoveTimer(btn_timer_id);
             right_btn.update_state(State::Hovered);
+            off_btn = false;
           } else {
             right_btn.update_state(State::Default);
           }
+
+          if (off_btn) {
+            SDL_RemoveTimer(btn_timer_id);
+            btn_timer_id = SDL_AddTimer(BTN_TIMER, btn_timer_callback, NULL);
+          }
+
           break;
         }
         case SDL_MOUSEBUTTONUP: {
@@ -91,6 +118,13 @@ int main(int argc, char **argv) {
           } else if (SDL_PointInRect(&p, &right_btn.get_rect()) == SDL_TRUE) {
             increment_index();
             update_texture();
+          }
+          break;
+        }
+        case SDL_USEREVENT: {
+          if (event.user.code == BTN_TIMERCODE) {
+            left_btn.set_visible(false);
+            right_btn.set_visible(false);
           }
           break;
         }
