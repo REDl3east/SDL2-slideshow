@@ -31,13 +31,13 @@ class TwoDirectionalButton {
   ~TwoDirectionalButton() {
   }
   void render() {
-    SDL_Rect r1 = {w * ((int)direction), h * ((int)state), w, h};
-    SDL_Rect r2 = {(int)(x - scale * (w / 2)), (int)(y - scale * (h / 2)), (int)(w * scale), (int)(h * scale)};
-    SDL_RenderCopy(renderer, texture, &r1, &r2);
+    SDL_RenderCopy(renderer, texture, &button_rect, &window_rect);
   }
   void update_pos(int x, int y) {
     this->x = x;
     this->y = y;
+    button_rect = {w * ((int)direction), h * ((int)state), w, h};
+    window_rect = {(int)(x - scale * (w / 2)), (int)(y - scale * (h / 2)), (int)(w * scale), (int)(h * scale)};
   }
   void update_state(State s) {
     state = s;
@@ -53,6 +53,10 @@ class TwoDirectionalButton {
     return h * scale;
   }
 
+  SDL_Rect& get_rect(){
+    return window_rect;
+  }
+
  private:
   int x, y, w, h;
   double scale;
@@ -61,6 +65,8 @@ class TwoDirectionalButton {
 
   Direction direction;
   State state;
+  SDL_Rect button_rect;
+  SDL_Rect window_rect;
 };
 
 // enum class State {
